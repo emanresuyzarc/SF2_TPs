@@ -1,3 +1,6 @@
+
+liste_operateurs = {"+", "-", "*", "/"}
+
 def tokenize(expression: str) -> list[str]:
     tokens = []
     for element in expression:
@@ -58,10 +61,39 @@ def infix_to_postfix(tokens: list[str]) -> list[str]:
     return liste_output
 
 def evaluate_postfix(tokens: list[str]) -> float:
-    pass
+    liste_calcul = []
+
+    for token in tokens:
+        if token.isdigit():
+            liste_calcul.append(float(token))
+
+        elif token in liste_operateurs:
+            """
+            if len(stack) < 2:
+                    raise ValueError("Insufficient operands for operation.")
+            """
+            b = int(liste_calcul.pop())
+            a = int(liste_calcul.pop())
+
+            print(liste_calcul)
+            print(a)
+            print(b)
+
+            if token == "+":
+                liste_calcul += (a + b)
+            elif token == "-":
+                liste_calcul -= (a - b)
+            elif token == "*":
+                liste_calcul *= (a * b)
+            elif token == "/":
+                if b == 0:
+                    raise ZeroDivisionError("Division by zero.")
+                liste_calcul /= (a / b)
+
+    return liste_calcul
+
     
  
 
-
 expr = "3+4*2/(1-5)"
-print(infix_to_postfix(tokenize(expr)))
+print(evaluate_postfix(infix_to_postfix(tokenize(expr))))
