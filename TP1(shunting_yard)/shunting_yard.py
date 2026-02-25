@@ -62,9 +62,10 @@ def infix_to_postfix(tokens: list[str]) -> list[str]:
 
 def evaluate_postfix(tokens: list[str]) -> float:
     liste_calcul = []
+    resultat = 0
 
     for token in tokens:
-        if token.isdigit():
+        if token not in liste_operateurs:
             liste_calcul.append(float(token))
 
         elif token in liste_operateurs:
@@ -72,23 +73,26 @@ def evaluate_postfix(tokens: list[str]) -> float:
             if len(stack) < 2:
                     raise ValueError("Insufficient operands for operation.")
             """
+            print(liste_calcul)
+
             b = int(liste_calcul.pop())
             a = int(liste_calcul.pop())
 
-            print(liste_calcul)
             print(a)
             print(b)
 
             if token == "+":
-                liste_calcul += (a + b)
+                resultat == (a + b)
             elif token == "-":
-                liste_calcul -= (a - b)
+                resultat == (a - b)
             elif token == "*":
-                liste_calcul *= (a * b)
+                resultat == (a * b)
             elif token == "/":
                 if b == 0:
                     raise ZeroDivisionError("Division by zero.")
-                liste_calcul /= (a / b)
+                resultat == (a / b)
+            
+            liste_calcul.append(resultat)
 
     return liste_calcul
 
@@ -96,4 +100,6 @@ def evaluate_postfix(tokens: list[str]) -> float:
  
 
 expr = "3+4*2/(1-5)"
-print(evaluate_postfix(infix_to_postfix(tokenize(expr))))
+expr2 = (infix_to_postfix(tokenize(expr)))
+print(expr2)
+print(evaluate_postfix(expr2))
