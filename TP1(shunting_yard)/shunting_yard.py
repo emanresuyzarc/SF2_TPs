@@ -2,11 +2,41 @@
 liste_operateurs = {"+", "-", "*", "/"}
 
 def tokenize(expression: str) -> list[str]:
+    print(expression)
     tokens = []
+    nombre = ""
+
     for element in expression:
-        tokens.append(str(element))
+        print(element)
+
+        if element == " ":
+            continue
+
+        elif element == "-" and tokens[-1] in liste_operateurs:
+            nombre += element
+
+        elif element.isdigit() or element == "." or element == ",":
+            nombre += element
+        
+        elif element in liste_operateurs:
+            if nombre:
+                tokens.append(nombre)
+                nombre = ""
+            tokens.append(element)
+
+        elif element == "(" or element == ")":
+            if nombre:
+                tokens.append(nombre)
+                nombre = ""
+            tokens.append(element)
+        
+        else:
+            raise ValueError(f"Élement invalide : {element}")
+        
+    tokens.append(nombre)
 
     return tokens
+
 
 def infix_to_postfix(tokens: list[str]) -> list[str]:
     priorite_operateurs = {"+": 1, "-": 1, "*": 2, "/": 2,}
@@ -14,10 +44,13 @@ def infix_to_postfix(tokens: list[str]) -> list[str]:
     pile_operateurs = []
 
     for token in tokens:
-        if token.isnumeric():
+        try:
+            float(token)
             liste_output.append(token)
+        except ValueError:
+            pass
         
-        elif token in priorite_operateurs:
+        if token in priorite_operateurs:
             while pile_operateurs:
                 sommet_pile = pile_operateurs[-1]
 
@@ -52,17 +85,18 @@ def infix_to_postfix(tokens: list[str]) -> list[str]:
     
     return liste_output
 
-def evaluate_postfix(tokens: list[str]) -> float:
-    liste_calcul = []
+def evaluate_postfix(tokens):
+    pile_calcul = []
 
     for token in tokens:
-        if token.isnumeric():
-            liste_calcul.append(float(token))
-
+        if token not in liste_operateurs:
+            pile_calcul.append(float(token))
+            print(pile_calcul)
+        
         else:
 
-            b = liste_calcul.pop()
-            a = liste_calcul.pop()
+            b = pile_calcul.pop()
+            a = pile_calcul.pop()
 
             if token == "+":
                 resultat = (a + b)
@@ -72,16 +106,11 @@ def evaluate_postfix(tokens: list[str]) -> float:
                 resultat = (a * b)
             elif token == "/":
                 if b == 0:
-                    raise ZeroDivisionError("Division by zero.")
+                    raise ZeroDivisionError("Division par zéro")
                 resultat = (a / b)
             
-            liste_calcul.append(resultat)
+            pile_calcul.append(resultat)
 
-    return int(liste_calcul.pop())
+    return pile_calcul[0]
 
-    
- 
-
-expr = "3+4*2/(1-5)"
-expr2 = (evaluate_postfix(infix_to_postfix(tokenize(expr))))
-print(expr2)
+print((tokenize("3+4*2/(1-5)+3.46")))
