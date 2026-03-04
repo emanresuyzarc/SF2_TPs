@@ -126,5 +126,3 @@ def evaluate_postfix(tokens):
                 pile_calcul.append(resultat)
 
     return pile_calcul[0]
-
-print(evaluate_postfix(infix_to_postfix(tokenize("3+4*2/(1-5)+3.5"))))

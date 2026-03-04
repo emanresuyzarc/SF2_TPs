@@ -15,9 +15,9 @@ def cliquer():
 
             etiquette_postfix.config(text=f"{expr_postfix}")
             etiquette_resultat.config(text=f"{resultat}")
-            etiquette_erreur.config(text=" - ")
+            etiquette_erreur.config(text=" - ", fg="black")
         except Exception as e:
-            etiquette_erreur.config(text=f"Erreur : {e}")
+            etiquette_erreur.config(text=f"Erreur : {e}", fg="red")
             etiquette_postfix.config(text=" - ")
             etiquette_resultat.config(text=" - ")
               
