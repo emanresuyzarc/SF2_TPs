@@ -1,22 +1,30 @@
-
-liste_operateurs = {"+", "-", "*", "/"}
-
 def tokenize(expression: str) -> list[str]:
-    print(expression)
+    liste_operateurs = {"+", "-", "*", "/"}
     tokens = []
     nombre = ""
 
     for element in expression:
-        print(element)
 
         if element == " ":
             continue
 
-        elif element == "-" and tokens[-1] in liste_operateurs:
-            nombre += element
+        elif element == "-":
+            if not nombre and (not tokens or tokens[-1] in liste_operateurs or tokens[-1] == "("):
+                nombre += element
+            else:
+                if nombre:
+                    tokens.append(nombre)
+                    nombre = ""
+                tokens.append("-")
+            continue
 
-        elif element.isdigit() or element == "." or element == ",":
+        elif element.isdigit():
             nombre += element
+        
+        elif element == "." or element == ",":
+            if "." in nombre:
+                raise ValueError("Plusieurs points/virgules dans le même nombre")
+            nombre += "."
         
         elif element in liste_operateurs:
             if nombre:
@@ -31,9 +39,10 @@ def tokenize(expression: str) -> list[str]:
             tokens.append(element)
         
         else:
-            raise ValueError(f"Élement invalide : {element}")
-        
-    tokens.append(nombre)
+            raise ValueError(f"Opérateur inconnu ({element})")
+    
+    if nombre:
+        tokens.append(nombre)
 
     return tokens
 
@@ -47,6 +56,7 @@ def infix_to_postfix(tokens: list[str]) -> list[str]:
         try:
             float(token)
             liste_output.append(token)
+            continue
         except ValueError:
             pass
         
@@ -73,7 +83,7 @@ def infix_to_postfix(tokens: list[str]) -> list[str]:
             pile_operateurs.pop()
 
         else:
-            raise ValueError("Opérateur inconnu")
+            raise ValueError(f"Opérateur inconnu ({token})")
 
     while pile_operateurs:
         sommet_pile = pile_operateurs.pop()
@@ -86,31 +96,35 @@ def infix_to_postfix(tokens: list[str]) -> list[str]:
     return liste_output
 
 def evaluate_postfix(tokens):
+    liste_operateurs = {"+", "-", "*", "/"}
     pile_calcul = []
 
     for token in tokens:
         if token not in liste_operateurs:
             pile_calcul.append(float(token))
-            print(pile_calcul)
         
         else:
+            if len(pile_calcul) < 2:
+                raise ValueError("Expression invalide")
 
-            b = pile_calcul.pop()
-            a = pile_calcul.pop()
+            else:
 
-            if token == "+":
-                resultat = (a + b)
-            elif token == "-":
-                resultat = (a - b)
-            elif token == "*":
-                resultat = (a * b)
-            elif token == "/":
-                if b == 0:
-                    raise ZeroDivisionError("Division par zéro")
-                resultat = (a / b)
-            
-            pile_calcul.append(resultat)
+                b = pile_calcul.pop()
+                a = pile_calcul.pop()
+
+                if token == "+":
+                    resultat = (a + b)
+                elif token == "-":
+                    resultat = (a - b)
+                elif token == "*":
+                    resultat = (a * b)
+                elif token == "/":
+                    if b == 0:
+                        raise ZeroDivisionError("Division par zéro")
+                    resultat = (a / b)
+                
+                pile_calcul.append(resultat)
 
     return pile_calcul[0]
 
-print((tokenize("3+4*2/(1-5)+3.46")))
+print(evaluate_postfix(infix_to_postfix(tokenize("3+4*2/(1-5)+3.5"))))

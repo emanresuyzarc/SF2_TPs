@@ -15,9 +15,11 @@ def cliquer():
 
             etiquette_postfix.config(text=f"{expr_postfix}")
             etiquette_resultat.config(text=f"{resultat}")
-            etiquette_erreur.config(text="")
+            etiquette_erreur.config(text=" - ")
         except Exception as e:
             etiquette_erreur.config(text=f"Erreur : {e}")
+            etiquette_postfix.config(text=" - ")
+            etiquette_resultat.config(text=" - ")
               
 
 bouton_conversion = tk.Button(fenetre, text="Convertir en notation postfixée", command=cliquer)
